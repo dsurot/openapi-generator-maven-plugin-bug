@@ -1,0 +1,18 @@
+{{#jackson}}
+
+{{! To address https://github.com/OpenAPITools/openapi-generator/issues/8559 }}
+{{! https://github.com/OpenAPITools/openapi-generator/blob/v5.1.0/modules/openapi-generator/src/main/resources/Java/typeInfoAnnotation.mustache }}
+{{! removes the 2nd @JsonTypeName in the below snippet }}
+{{! Happen when Class Name is sanitized (contains '_' : InsuranceCancellationProviderInfo_ResultKo) }}
+
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "{{{discriminator.propertyBaseName}}}", visible = true)
+{{#discriminator.mappedModels}}
+{{#-first}}
+@JsonSubTypes({
+{{/-first}}
+  @JsonSubTypes.Type(value = {{modelName}}.class, name = "{{^vendorExtensions.x-discriminator-value}}{{mappingName}}{{/vendorExtensions.x-discriminator-value}}{{#vendorExtensions.x-discriminator-value}}{{{vendorExtensions.x-discriminator-value}}}{{/vendorExtensions.x-discriminator-value}}"),
+{{#-last}}
+})
+{{/-last}}
+{{/discriminator.mappedModels}}
+{{/jackson}}

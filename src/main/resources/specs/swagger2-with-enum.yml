@@ -1,0 +1,75 @@
+swagger: '2.0'
+info:
+  description: a short description
+  version: '1.0.0'
+  title: A swagger 2 API with enum
+  contact:
+    name: API Developper
+    email: damien.surot@accor.com
+basePath: '/api/v1'
+tags:
+  - name: api-end-point
+    description: API End Point
+schemes:
+  - https
+paths:
+  /api:
+    get:
+      tags:
+        - api-end-point
+      operationId: apiUsingGET
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-TraceId:
+              type: string
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ObjectWithEnum'
+        '400':
+          description: Bad Request
+          headers:
+            X-TraceId:
+              type: string
+securityDefinitions:
+  basicAuth:
+    type: basic
+  apiKey:
+    type: apiKey
+    name: apikey
+    in: header
+security:
+  - basicAuth: []
+  - apiKey: []
+definitions:
+  ObjectWithEnum:
+    description: Object with enum.
+    properties:
+      amount:
+        example: '56.99'
+        format: double
+        type: number
+      currency:
+        example: EUR
+        type: string
+      status:
+        allOf:
+          - $ref: '#/definitions/StatusEnum'
+          - example: WAITING_FOR_PAYMENT
+            readOnly: true
+    required:
+      - amount
+      - currency
+    type: object
+  StatusEnum:
+    description: "Status Enum"
+    enum:
+      - WAITING_FOR_PAYMENT
+      - PAYMENT_OK
+      - PAYMENT_KO
+      - PAYMENT_NOT_ATTEMPTED
+    type: string
